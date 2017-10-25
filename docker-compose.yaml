@@ -1,0 +1,24 @@
+version: '3'
+services:
+  consul_node1:
+    build:
+      context: ./images/
+      dockerfile: Dockerfile-consul-0.7.2
+    ports:
+     - "8600:8600"
+     - "8500:8500"
+
+    command: sh -c '/app/consul-0.7.2/consul agent -datacenter=docker_dc -bootstrap -server -data-dir=/tmp/consul -client=0.0.0.0 -ui ; tail -f /dev/null'
+
+  consul_node2:
+    build:
+      context: ./images/
+      dockerfile: Dockerfile-consul-0.7.2
+    command: sh -c '/app/consul-0.7.2/consul agent -datacenter=docker_dc -server -data-dir=/tmp/consul  -retry-join=consul_node1 ; tail -f /dev/null'
+
+
+  consul_node3:
+    build:
+      context: ./images/
+      dockerfile: Dockerfile-consul-0.7.2
+    command: sh -c '/app/consul-0.7.2/consul agent -datacenter=docker_dc -server -data-dir=/tmp/consul  -retry-join=consul_node1 ; tail -f /dev/null'
